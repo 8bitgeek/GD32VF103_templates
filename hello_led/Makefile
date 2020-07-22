@@ -5,7 +5,7 @@ OS = riscv32-unknown-elf-size
 
 # Assembly directives.
 ASFLAGS += -c
-ASFLAGS += -O0
+ASFLAGS += -ggdb # -O0
 ASFLAGS += -Wall
 ASFLAGS += -fmessage-length=0
 ASFLAGS += -march=rv32imac
@@ -15,7 +15,7 @@ ASFLAGS += -mcmodel=medlow
 # C compilation directives
 CFLAGS += -c
 CFLAGS += -Wall
-CFLAGS += -O0
+CFLAGS += -ggdb # -O0
 CFLAGS += -g
 CFLAGS += -fmessage-length=0
 CFLAGS += --specs=nosys.specs

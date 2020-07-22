@@ -1,5 +1,13 @@
 # GD32VF103 Bare-Metal "Hello, World"
 
+NOTE: This is a fork from https://github.com/WRansohoff/GD32VF103_templates
+
+The aim of this fork is to use as a template for developing better OpenOCD support for riscv targets.
+
+Current State:
+* Using OpenOCD found here https://github.com/8bitgeek/riscv-openocd
+* OpenOCD scripts work with Olimex JTAG Tiny https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY/ proves feasability.
+
 This is a handful of template bare-metal programs for the GD32VF103CB RISC-V microcontroller. These look like fun chips because their peripherals are very similar to those found on the well-understood STM32F103 workhorse, but they have a shiny new RISC-V CPU core which is 50% faster and apparently more power efficient. So while RISC-V is a fairly young architecture, there is still plenty of example code demonstrating how to work with these peripherals, which should make it easier to get started.
 
 They are written for a "Longan Nano" board, which you can buy from Seeed Studios for a little less than $5 each at the time of writing:
