@@ -2,7 +2,7 @@
 
 NOTE: This is a fork from https://github.com/WRansohoff/GD32VF103_templates
 
-The aim of this fork is to use as a template for developing better OpenOCD support for riscv targets.
+The aim of this fork is to use as a template for developing OpenOCD support for RISC-V targets.
 
 Current State:
 * Using OpenOCD found here https://github.com/8bitgeek/riscv-openocd
