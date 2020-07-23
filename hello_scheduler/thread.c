@@ -8,7 +8,7 @@
 scheduler_t scheduler_state;
 
 #define thread_mtime_clear()    *( volatile uint64_t * )( TIMER_CTRL_ADDR + TIMER_MTIME ) = 0
-#define thread_state(id)        (&scheduler_state.threads[(id)])
+#define thread_state(id)        ((id) > 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
 
 static int thread_new_id( void );
 
@@ -40,7 +40,7 @@ void thread_yield( void )
     __WFI();
 }
 
-int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz, int8_t prio )
+int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz )
 {
     int id = thread_new_id();
     if ( id >= 0 )
@@ -57,10 +57,21 @@ int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_s
 
         /* initialize the initial thread state */
         thread->cpu_state  = cpu_state;
-        thread->prio = prio;
+        thread->prio = THREAD_PRIO_SUSPEND;
         strncpy( thread->name, name, THREAD_NAME_MAX );
     }
     return id;
+}
+
+int thread_set_prio ( int id, int8_t prio )
+{
+    thread_t* thread = thread_state(id);
+    if ( thread )
+    {
+        thread->prio = prio;
+        return id;
+    }
+    return -1;
 }
 
 __attribute__( ( naked ) ) 

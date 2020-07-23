@@ -39,8 +39,12 @@ extern scheduler_t scheduler_state;
 #define thread_systick_isr  eclic_mtip_handler
 #define thread_systick()    scheduler_state.systick
 
-extern void thread_init  ( void );
-extern int  thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz, int8_t prio );
-extern void thread_yield ( void );
+#define thread_stop(id)     thread_set_prio((id),THREAD_PRIO_SUSPEND)
+#define thread_start(id)    thread_set_prio((id),THREAD_PRIO_MIN)
+
+extern void thread_init     ( void );
+extern int  thread_create   ( char* name, void (*entry)(void*), void* stack, size_t stack_sz );
+extern int  thread_set_prio ( int id, int8_t prio );
+extern void thread_yield    ( void );
 
 #endif
