@@ -31,12 +31,11 @@ typedef struct scheduler
 {
     thread_systick_t    systick;
     thread_t            threads[THREAD_MAX];
-    thread_t*           thread;
+    uint8_t             thread_id;
 } scheduler_t;
 
 extern scheduler_t scheduler_state;
 
-#define thread_systick_isr  eclic_mtip_handler
 #define thread_systick()    scheduler_state.systick
 
 #define thread_stop(id)     thread_set_prio((id),THREAD_PRIO_SUSPEND)
@@ -46,5 +45,7 @@ extern void thread_init     ( void );
 extern int  thread_create   ( char* name, void (*entry)(void*), void* stack, size_t stack_sz );
 extern int  thread_set_prio ( int id, int8_t prio );
 extern void thread_yield    ( void );
+
+extern volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void );
 
 #endif

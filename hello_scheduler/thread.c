@@ -6,23 +6,20 @@
 
 scheduler_t scheduler_state;
 
-#define thread_mtime_clear()    *( volatile uint64_t * )( TIMER_CTRL_ADDR + TIMER_MTIME ) = 0
-#define thread_state(id)        ((id) > 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
+#define thread_mtime_clear()        *( volatile uint64_t * )( TIMER_CTRL_ADDR + TIMER_MTIME ) = 0
+
+#define thread_state(id)            ((id) > 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
+
+#define systick_service()           ++scheduler_state.systick;      \
+                                    thread_mtime_clear();
+
+#define scheduler_service()         register cpu_reg_t context_sp;              \
+                                    if ( ( context_sp = next_context() ) != 0 ) \
+                                        cpu_load_sp( context_sp );
+
 
 static int thread_new_id( void );
-
-static int thread_new_id( void )
-{
-    for(int id=0; id < THREAD_MAX; id++)
-    {
-        if ( scheduler_state.threads[id].prio == THREAD_PRIO_INACTIVE )
-        {
-            scheduler_state.threads[id].prio = THREAD_PRIO_SUSPEND;
-            return id;
-        }
-    }
-    return -1;
-}
+static cpu_reg_t next_context( void );
 
 void thread_init( void )
 {
@@ -70,13 +67,45 @@ int thread_set_prio ( int id, int8_t prio )
     return -1;
 }
 
-__attribute__( ( interrupt ) )
-void thread_systick_isr( void ) 
+
+static int thread_new_id( void )
 {
-    cpu_push_state();
-    ++scheduler_state.systick;
-    thread_mtime_clear();
-    cpu_pop_state();
+    for(int id=0; id < THREAD_MAX; id++)
+    {
+        if ( scheduler_state.threads[id].prio == THREAD_PRIO_INACTIVE )
+        {
+            scheduler_state.threads[id].prio = THREAD_PRIO_SUSPEND;
+            return id;
+        }
+    }
+    return -1;
+}
+
+static cpu_reg_t next_context( void )
+{
+    for(int nThread=0; nThread < THREAD_MAX; nThread++)
+    {
+        scheduler_state.thread_id = ( scheduler_state.thread_id+1 >= THREAD_MAX ) ? 0 : scheduler_state.thread_id+1;
+        if ( scheduler_state.threads[scheduler_state.thread_id].prio > 0 )
+        {
+            return scheduler_state.threads[scheduler_state.thread_id].cpu_state->abi.sp;
+        }
+    }
+    return 0;
+}
+
+
+volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void ) 
+{
+    cpu_systick_enter();
+    
+        cpu_push_state();
+
+            systick_service();
+            scheduler_service();
+    
+        cpu_pop_state();
+
     cpu_systick_exit();
 }
 

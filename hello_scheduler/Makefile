@@ -25,6 +25,7 @@ CFLAGS += -mabi=ilp32
 CFLAGS += -mcmodel=medlow
 
 # Linker directives.
+LFLAGS +=  -Xlinker -Map=main.map 
 LFLAGS += -Wall
 LFLAGS += -Wl,--no-relax
 LFLAGS += -Wl,--gc-sections
@@ -36,10 +37,10 @@ LFLAGS += --specs=nosys.specs
 LFLAGS += -march=rv32imac
 LFLAGS += -mabi=ilp32
 LFLAGS += -mcmodel=medlow
-LFLAGS += -T./../common/gd32vf103xb.ld
+LFLAGS += -T./gd32vf103xb.ld
 
 # Source files.
-AS_SRC  = ./../common/gd32vf103xb_boot.S
+AS_SRC  += ./gd32vf103xb_boot.S
 C_SRC  += ./main.c
 C_SRC  += ./thread.c
 C_SRC  += ./hw_init.c
@@ -81,6 +82,7 @@ clean:
 	rm -f $(OBJS)
 	rm -f main.elf
 	rm -f main.bin
+	rm -f main.map
 
 # Rule to start openocd
 start:
