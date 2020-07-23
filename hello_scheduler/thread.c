@@ -12,6 +12,10 @@ scheduler_t scheduler_state;
 void thread_init( void )
 {
     memset(&scheduler_state,0,sizeof(scheduler_state));
+    
+    for(int n=0; n < THREAD_MAX; n++)
+        scheduler_state.threads[n].prio = THREAD_PRIO_INACTIVE;
+    
     hw_init();
 }
 

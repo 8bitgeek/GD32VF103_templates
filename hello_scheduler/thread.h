@@ -14,8 +14,14 @@
 
 #define thread_systick_t    uint32_t
 
+#define THREAD_PRIO_INACTIVE    (-1)
+#define THREAD_PRIO_SUSPEND     (0)
+#define THREAD_PRIO_MIN         (1)
+#define THREAD_PRIO_MAX         (127)
+
 typedef struct thread
 {
+    int8_t              prio;
     char                name[THREAD_NAME_MAX+1];
     cpu_state_t*        cpu_state;
 } thread_t;
