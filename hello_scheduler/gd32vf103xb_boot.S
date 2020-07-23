@@ -16,6 +16,7 @@ vtable:
   .word 0
   .word 0
   .word eclic_mtip_handler
+  .set  eclic_mtip_handler,systick_isr
   .word 0
   .word 0
   .word 0

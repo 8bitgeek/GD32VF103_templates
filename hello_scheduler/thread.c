@@ -8,7 +8,7 @@ scheduler_t scheduler_state;
 
 #define thread_mtime_clear()        *( volatile uint64_t * )( TIMER_CTRL_ADDR + TIMER_MTIME ) = 0
 
-#define thread_state(id)            ((id) > 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
+#define thread_state(id)            ((id) >= 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
 
 #define systick_service()           ++scheduler_state.systick;      \
                                     thread_mtime_clear();
@@ -33,7 +33,7 @@ void thread_yield( void )
     // __WFI();
 }
 
-int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz )
+int thread_create( const char* name, void (*entry)(void*), void* stack, size_t stack_sz )
 {
     int id = thread_new_id();
     if ( id >= 0 )
@@ -95,7 +95,7 @@ static cpu_reg_t next_context( void )
 }
 
 
-volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void ) 
+volatile __attribute__( ( naked ) ) void systick_isr( void ) 
 {
     cpu_systick_enter();
     

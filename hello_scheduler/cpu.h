@@ -70,13 +70,11 @@ typedef union cpu_state_t
 /** @HACK undo the __attribute__( ( interrupt ) ) preamble */
 #define cpu_systick_enter()             \
     __asm(  "  nop               \n"    \
-            "  nop               \n"    \
             )
 
 /* @HACK ignore the __attribute__( ( interrupt ) ) preamble */
 #define cpu_systick_exit()              \
-    __asm(  "  nop               \n"    \
-            "  mret              \n"    \
+    __asm(  "  mret              \n"    \
             )
 
 #define cpu_push_state() 			    \

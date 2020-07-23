@@ -46,6 +46,7 @@ C_SRC  += ./thread.c
 C_SRC  += ./hw_init.c
 C_SRC  += ./delay.c
 C_SRC  += ./cpu.c
+C_SRC  += ./led.c
 C_SRC  += ./../common/device_headers/n200_func.c
 
 # Header file directories.

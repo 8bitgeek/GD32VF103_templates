@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "n200_func.h": "c"
+        "n200_func.h": "c",
+        "led.h": "c"
     }
 }
