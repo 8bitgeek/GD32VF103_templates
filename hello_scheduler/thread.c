@@ -1,5 +1,4 @@
 #include "thread.h"
-#include "hw_init.h"
 #include "cpu.h"
 #include "gd32vf103.h"
 #include "n200_func.h"
@@ -28,16 +27,13 @@ static int thread_new_id( void )
 void thread_init( void )
 {
     memset(&scheduler_state,0,sizeof(scheduler_state));
-    
     for(int n=0; n < THREAD_MAX; n++)
-        scheduler_state.threads[n].prio = THREAD_PRIO_INACTIVE;
-    
-    hw_init();
+        scheduler_state.threads[n].prio = THREAD_PRIO_INACTIVE;    
 }
 
 void thread_yield( void )
 {
-    __WFI();
+    // __WFI();
 }
 
 int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz )
@@ -74,12 +70,13 @@ int thread_set_prio ( int id, int8_t prio )
     return -1;
 }
 
-__attribute__( ( naked ) ) 
+__attribute__( ( interrupt ) )
 void thread_systick_isr( void ) 
 {
     cpu_push_state();
     ++scheduler_state.systick;
     thread_mtime_clear();
     cpu_pop_state();
+    cpu_systick_exit();
 }
 

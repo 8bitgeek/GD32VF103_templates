@@ -49,7 +49,7 @@ typedef union cpu_state_t
     } abi;
 } cpu_state_t;
 
-#define cpu_push_state() 			\
+#define cpu_push_state() 			    \
 	__asm (								\
         "   addi    sp,sp,-128      \n" \
         "   sw      x0,124(sp)      \n" \
@@ -86,7 +86,7 @@ typedef union cpu_state_t
         "   sw      x31,0(sp)       \n" \
 		)
 
-#define cpu_pop_state() \
+#define cpu_pop_state()                 \
 	__asm (								\
         "   lw      x0,124(sp)      \n" \
         "   lw      x1,120(sp)      \n" \
@@ -123,4 +123,13 @@ typedef union cpu_state_t
         "   addi    sp,sp,128       \n" \
  		)
 
+#define cpu_systick_exit()		        \
+	__asm (							    \
+        "   sw      s0,12(sp)       \n" \
+        "   sw      a3,8(sp)        \n" \
+        "   sw      a4,4(sp)        \n" \
+        "   sw      a5,0(sp)        \n" \
+		)
+
 #endif
+
