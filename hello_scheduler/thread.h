@@ -39,6 +39,7 @@ extern scheduler_t scheduler_state;
 #define thread_systick()    scheduler_state.systick
 
 extern void thread_init  ( void );
+extern int  thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz, int8_t prio );
 extern void thread_yield ( void );
 
 #endif

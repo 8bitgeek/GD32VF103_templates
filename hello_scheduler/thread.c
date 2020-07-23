@@ -24,6 +24,11 @@ void thread_yield( void )
     __WFI();
 }
 
+int thread_create( char* name, void (*entry)(void*), void* stack, size_t stack_sz, int8_t prio )
+{
+    return -1;
+}
+
 __attribute__( ( interrupt ) ) 
 void thread_systick_isr( void ) 
 {
