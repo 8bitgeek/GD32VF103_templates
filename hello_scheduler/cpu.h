@@ -5,6 +5,8 @@
 
 #define CPU_MAX_XREG    32
 
+typedef uint32_t cpu_reg_t;
+
 typedef union cpu_state_t
 {
     struct {

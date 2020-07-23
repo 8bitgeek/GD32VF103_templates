@@ -2,6 +2,7 @@
 #define _THREAD_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include "cpu.h"
 
 #ifndef THREAD_MAX
