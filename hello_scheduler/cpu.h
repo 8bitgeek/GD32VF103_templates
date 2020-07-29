@@ -45,7 +45,7 @@ typedef union cpu_state_t
         uint32_t    gp;     //  x3  Global pointer
         uint32_t    sp;     //  x2  Stack pointer
         uint32_t    ra;     //  x1  Return address
-        uint32_t    zero;   //  x0  Hard-wired zero
+        uint32_t    pc;     //  mepc program counter
     } abi;
 } cpu_state_t;
 
@@ -80,7 +80,8 @@ typedef union cpu_state_t
 #define cpu_push_state() 			    \
 	__asm (								\
         "   addi    sp,sp,-128      \n" \
-        "   sw      x0,124(sp)      \n" \
+        "   csrr    t0,mepc         \n" \
+        "   sw      t0,124(sp)      \n" \
         "   sw      x1,120(sp)      \n" \
         "   sw      x2,116(sp)      \n" \
         "   sw      x3,112(sp)      \n" \
@@ -116,7 +117,8 @@ typedef union cpu_state_t
 
 #define cpu_pop_state()                 \
 	__asm (								\
-        "   lw      x0,124(sp)      \n" \
+        "   lw      t0,124(sp)      \n" \
+        "   csrw    mepc,t0         \n" \
         "   lw      x1,120(sp)      \n" \
         "   lw      x2,116(sp)      \n" \
         "   lw      x3,112(sp)      \n" \

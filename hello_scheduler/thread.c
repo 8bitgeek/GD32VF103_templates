@@ -17,9 +17,9 @@ scheduler_t scheduler_state;
                                     if ( ( context_sp = next_context() ) != 0 ) \
                                         cpu_load_sp( context_sp );
 
-
-static int thread_new_id( void );
-static cpu_reg_t next_context( void );
+static void      thread_exit  ( void );
+static int       thread_new_id( void );
+static cpu_reg_t next_context ( void );
 
 void thread_init( void )
 {
@@ -30,7 +30,14 @@ void thread_init( void )
 
 void thread_yield( void )
 {
-    // __WFI();
+    __WFI();
+}
+
+static void thread_exit( void )
+{
+    // TODO - de-allocate, clean up
+    // wait to die
+    for(;;);
 }
 
 int thread_create( const char* name, void (*entry)(void*), void* stack, size_t stack_sz )
@@ -45,7 +52,8 @@ int thread_create( const char* name, void (*entry)(void*), void* stack, size_t s
         cpu_state_t* cpu_state = (cpu_state_t*)&stack_uint8[stack_sz-sizeof(cpu_state_t)];
         memset( cpu_state, 0, sizeof(cpu_state_t) );
  
-        cpu_state->abi.ra = (cpu_reg_t)entry;
+        cpu_state->abi.ra = (cpu_reg_t)thread_exit;
+        cpu_state->abi.pc = (cpu_reg_t)entry;
         cpu_state->abi.sp = (cpu_reg_t)cpu_state;
 
         /* initialize the initial thread state */

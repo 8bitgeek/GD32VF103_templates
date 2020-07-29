@@ -40,6 +40,8 @@ void hw_init( void ) {
                      0x1 << 2 );
   GPIOC->ODR   |=  ( 0x1 << 13 );
 
+  // Disable interrupts globally.
+  clear_csr( mstatus, MSTATUS_MIE );
   // Set up the global timer to generate an interrupt every ms.
   // Figure out how many interrupts are available.
   uint32_t max_irqn = *( volatile uint32_t * )( ECLIC_ADDR_BASE + ECLIC_INFO_OFFSET );
