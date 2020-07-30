@@ -31,9 +31,9 @@ static void thread_green(void* arg)
 {
     for(;;)
     {
-        led_green(false);
-        delay_ms(DELAY);
         led_green(true);
+        delay_ms(DELAY);
+        led_green(false);
         delay_ms(DELAY);
     }
 
@@ -43,7 +43,7 @@ int main( void )
 {
     hw_init();
     thread_init();
-
+    
     led_red(false);
     led_green(false);
     led_blue(false);
@@ -57,9 +57,9 @@ int main( void )
     for(;;)
     {
         led_blue(false);
-        delay_ms(DELAY);
+        delay_ms(DELAY*2);
         led_blue(true);
-        delay_ms(DELAY);
+        delay_ms(DELAY*2);
     }
 
     return 0;

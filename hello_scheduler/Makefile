@@ -41,13 +41,13 @@ LFLAGS += -T./gd32vf103xb.ld
 
 # Source files.
 AS_SRC  += ./gd32vf103xb_boot.S
+C_SRC  += ./../common/device_headers/n200_func.c
 C_SRC  += ./main.c
 C_SRC  += ./thread.c
 C_SRC  += ./hw_init.c
 C_SRC  += ./delay.c
 C_SRC  += ./cpu.c
 C_SRC  += ./led.c
-C_SRC  += ./../common/device_headers/n200_func.c
 
 # Header file directories.
 INCLUDE = -I./../common/device_headers

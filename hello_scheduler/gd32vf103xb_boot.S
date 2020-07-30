@@ -7,7 +7,7 @@
 .type vtable, %object
 .section .vector_table,"a",%progbits
 vtable:
-  j reset_handler
+  jal reset_handler
   .align 2
   .word 0
   .word 0
@@ -234,15 +234,6 @@ vtable:
   .set  USB_IRQn_handler,default_interrupt_handler
 
 /*
- * A 'default' interrupt handler, in case an interrupt triggers
- * without a handler being defined.
- */
-.section .text.default_interrupt_handler,"ax",%progbits
-default_interrupt_handler:
-    default_interrupt_loop:
-      j default_interrupt_loop
-
-/*
  * Assembly 'reset handler' function to initialize core CPU registers.
  */
 .global reset_handler
@@ -272,3 +263,13 @@ reset_handler:
   li   a0, 0
   li   a1, 0
   call main
+
+/*
+ * A 'default' interrupt handler, in case an interrupt triggers
+ * without a handler being defined.
+ */
+.section .text.default_interrupt_handler,"ax",%progbits
+default_interrupt_handler:
+    default_interrupt_loop:
+      j default_interrupt_loop
+

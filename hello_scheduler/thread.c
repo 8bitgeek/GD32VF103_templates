@@ -15,22 +15,24 @@ scheduler_t scheduler_state;
 
 #define scheduler_service()         register cpu_reg_t context_sp;              \
                                     if ( ( context_sp = next_context() ) != 0 ) \
-                                        cpu_load_sp( context_sp );
+                                        cpu_wr_sp( context_sp );
 
-static void      thread_exit  ( void );
 static int       thread_new_id( void );
 static cpu_reg_t next_context ( void );
+static void      thread_exit  ( void );
 
 void thread_init( void )
 {
     memset(&scheduler_state,0,sizeof(scheduler_state));
     for(int n=0; n < THREAD_MAX; n++)
-        scheduler_state.threads[n].prio = THREAD_PRIO_INACTIVE;    
+        scheduler_state.threads[n].prio = THREAD_PRIO_INACTIVE;
+
+    thread_create( "main", NULL, NULL, 0 );
 }
 
 void thread_yield( void )
 {
-    __WFI();
+    //__WFI();
 }
 
 static void thread_exit( void )
@@ -46,19 +48,26 @@ int thread_create( const char* name, void (*entry)(void*), void* stack, size_t s
     if ( id >= 0 )
     {
         thread_t* thread = thread_state(id);
-        uint8_t* stack_uint8 = (uint8_t*)stack; 
+        if ( entry == NULL && stack == NULL )
+        {
+            thread->prio = THREAD_PRIO_MIN;
+        }
+        else
+        {
+             uint8_t* stack_uint8 = (uint8_t*)stack; 
 
-        /* initialize the cpu state initial stack frame */
-        cpu_state_t* cpu_state = (cpu_state_t*)&stack_uint8[stack_sz-sizeof(cpu_state_t)];
-        memset( cpu_state, 0, sizeof(cpu_state_t) );
- 
-        cpu_state->abi.ra = (cpu_reg_t)thread_exit;
-        cpu_state->abi.pc = (cpu_reg_t)entry;
-        cpu_state->abi.sp = (cpu_reg_t)cpu_state;
+            /* initialize the cpu state initial stack frame */
+            cpu_state_t* cpu_state = (cpu_state_t*)&stack_uint8[stack_sz-sizeof(cpu_state_t)];
+            memset( cpu_state, 0, sizeof(cpu_state_t) );
+    
+            cpu_state->abi.ra = (cpu_reg_t)thread_exit;
+            cpu_state->abi.pc = (cpu_reg_t)entry;
+            cpu_state->abi.sp = (cpu_reg_t)cpu_state;
 
-        /* initialize the initial thread state */
-        thread->cpu_state  = cpu_state;
-        thread->prio = THREAD_PRIO_SUSPEND;
+            /* initialize the initial thread state */
+            thread->cpu_state  = cpu_state;
+            thread->prio = THREAD_PRIO_SUSPEND;
+        }
         strncpy( thread->name, name, THREAD_NAME_MAX );
     }
     return id;
@@ -108,10 +117,11 @@ volatile __attribute__( ( naked ) ) void systick_isr( void )
     cpu_systick_enter();
     
         cpu_push_state();
-
+        scheduler_state.threads[scheduler_state.thread_id].cpu_state = (cpu_state_t*)cpu_rd_sp();
+        
             systick_service();
             scheduler_service();
-    
+
         cpu_pop_state();
 
     cpu_systick_exit();

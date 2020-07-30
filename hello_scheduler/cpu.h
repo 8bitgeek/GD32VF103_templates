@@ -49,30 +49,14 @@ typedef union cpu_state_t
     } abi;
 } cpu_state_t;
 
-#define cpu_load_sp(ptr) __asm ( "  mv  sp,%0" : : "r" (ptr) )
+#define cpu_wr_sp(ptr) __asm  ( "  mv  sp,%0\n" : : "r" (ptr) )
 
-//    __attribute__( ( interrupt ) ) preamble
-//    0x080004c4 <+0>:     addi    sp,sp,-16
-//    0x080004c6 <+2>:     sw      s0,12(sp)
-//    0x080004c8 <+4>:     sw      a3,8(sp)
-//    0x080004ca <+6>:     sw      a4,4(sp)
-//    0x080004cc <+8>:     sw      a5,0(sp)
-//    0x080004ce <+10>:    addi    s0,sp,16
+void* __attribute__((naked)) cpu_rd_sp(void);
 
-//    __attribute__( ( interrupt ) ) postamble
-//    0x0800057c <+184>:   lw      s0,12(sp)
-//    0x0800057e <+186>:   lw      a3,8(sp)
-//    0x08000580 <+188>:   lw      a4,4(sp)
-//    0x08000582 <+190>:   lw      a5,0(sp)
-//    0x08000584 <+192>:   addi    sp,sp,16
-//    0x08000586 <+194>:   mret
-
-/** @HACK undo the __attribute__( ( interrupt ) ) preamble */
 #define cpu_systick_enter()             \
     __asm(  "  nop               \n"    \
             )
 
-/* @HACK ignore the __attribute__( ( interrupt ) ) preamble */
 #define cpu_systick_exit()              \
     __asm(  "  mret              \n"    \
             )
