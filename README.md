@@ -11,6 +11,8 @@ Current State:
 * OpenOCD scripts work with Olimex JTAG Tiny https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY/ proves feasability.
 * hello_scheduler is functional, main thread (blinks blue), two additional threads (blink red, and green).
 
+[![Watch the video]](https://drive.google.com/file/d/1eyBtK5XMe4a7thEmYeiOO4IDjZxgUh8H/view?usp=sharing)
+
 ![screensnap1](https://raw.githubusercontent.com/8bitgeek/GD32VF103_templates/master/screens/risc-v-alive-1.png)
 
 This is a handful of template bare-metal programs for the GD32VF103CB RISC-V microcontroller. These look like fun chips because their peripherals are very similar to those found on the well-understood STM32F103 workhorse, but they have a shiny new RISC-V CPU core which is 50% faster and apparently more power efficient. So while RISC-V is a fairly young architecture, there is still plenty of example code demonstrating how to work with these peripherals, which should make it easier to get started.
