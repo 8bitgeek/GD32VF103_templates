@@ -1,0 +1,12 @@
+# C
+*.o
+*.elf
+*.hex
+*.map
+*.srec
+*.bin
+
+# Emacs
+*~
+\#*\#
+.\#*
