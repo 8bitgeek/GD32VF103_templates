@@ -2,11 +2,14 @@
 
 NOTE: This is a fork from https://github.com/WRansohoff/GD32VF103_templates
 
-The aim of this fork is to use as a template for developing OpenOCD support for RISC-V targets.
+The aim of this fork is:
+* To use as a template for developing OpenOCD support for RISC-V targets.
+* To develop a basic preemptive task scheduler proof of concept.
 
 Current State:
 * Using OpenOCD found here https://github.com/8bitgeek/riscv-openocd
 * OpenOCD scripts work with Olimex JTAG Tiny https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY/ proves feasability.
+* hello_scheduler is functional, main thread (blinks blue), two additional threads (blink red, and green).
 
 ![screensnap1](https://raw.githubusercontent.com/8bitgeek/GD32VF103_templates/master/screens/risc-v-alive-1.png)
 
