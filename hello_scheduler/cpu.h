@@ -97,7 +97,8 @@ void* __attribute__((naked)) cpu_rd_sp(void);
         "   sw      x29,8(sp)       \n" \
         "   sw      x30,4(sp)       \n" \
         "   sw      x31,0(sp)       \n" \
-		)
+		);                              \
+        scheduler_state.threads[scheduler_state.thread_id].cpu_state = (cpu_state_t*)cpu_rd_sp()
 
 #define cpu_pop_state()                 \
 	__asm (								\
