@@ -11,7 +11,7 @@ Current State:
 * OpenOCD scripts work with Olimex JTAG Tiny https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY/ proves feasability.
 * hello_scheduler is functional, main thread (blinks blue), two additional threads (blink red, and green).
 
-[![Watch the video](https://drive.google.com/file/d/1oQjoEr12m_h9FBhglT3jP8iBBy-5SUmF/view?usp=sharing)](https://drive.google.com/file/d/1eyBtK5XMe4a7thEmYeiOO4IDjZxgUh8H/view?usp=sharing)
+[![Watch the video](https://raw.githubusercontent.com/8bitgeek/GD32VF103_templates/master/screens/risc1.png)](https://drive.google.com/file/d/1eyBtK5XMe4a7thEmYeiOO4IDjZxgUh8H/view?usp=sharing)
 
 ![screensnap1](https://raw.githubusercontent.com/8bitgeek/GD32VF103_templates/master/screens/risc-v-alive-1.png)
 
