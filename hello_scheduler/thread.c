@@ -117,7 +117,6 @@ volatile __attribute__( ( naked ) ) void systick_isr( void )
     cpu_systick_enter();
     
         cpu_push_state();
-        scheduler_state.threads[scheduler_state.thread_id].cpu_state = (cpu_state_t*)cpu_rd_sp();
         
             systick_service();
             scheduler_service();
