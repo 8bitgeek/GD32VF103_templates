@@ -2,6 +2,7 @@
 #include "cpu.h"
 #include "gd32vf103.h"
 #include "n200_func.h"
+#include "riscv_encoding.h"
 #include <string.h>
 
 scheduler_t scheduler_state;
@@ -32,7 +33,9 @@ void thread_init( void )
 
 void thread_yield( void )
 {
-    //__WFI();
+    //eclic_set_pending(CLIC_INT_SFT);
+    __asm( "  ecall\n" );
+    set_csr( mstatus, MSTATUS_MIE );
 }
 
 static void thread_exit( void )
@@ -119,6 +122,48 @@ volatile __attribute__( ( naked ) ) void systick_isr( void )
         cpu_push_state();
         
             systick_service();
+            scheduler_service();
+            cpu_dec_mepc();
+
+        cpu_pop_state();
+
+    cpu_systick_exit();
+}
+
+__attribute__( ( naked ) ) void eclic_msip_handler( void )
+{
+    cpu_systick_enter();
+    
+        cpu_push_state();
+        
+            cpu_inc_mepc();
+            scheduler_service();
+            cpu_nop_mepc();
+
+        cpu_pop_state();
+
+    cpu_systick_exit();
+}
+
+__attribute__( ( interrupt ) ) void eclic_bwei_handler( void )
+{
+    cpu_systick_enter();
+    
+        cpu_push_state();
+        
+            scheduler_service();
+
+        cpu_pop_state();
+
+    cpu_systick_exit();
+}
+
+__attribute__( ( interrupt ) ) void eclic_pmovi_handler( void )
+{
+    cpu_systick_enter();
+    
+        cpu_push_state();
+        
             scheduler_service();
 
         cpu_pop_state();

@@ -19,9 +19,9 @@ SECTIONS
 
   .text :
   {
+    *(.text .text.*)
     *(.rodata .rodata.*)  
     *(.srodata .srodata.*)
-    *(.text .text.*)
   } >FLASH
 
   . = ALIGN(4);

@@ -100,6 +100,51 @@ void* __attribute__((naked)) cpu_rd_sp(void);
 		);                              \
         scheduler_state.threads[scheduler_state.thread_id].cpu_state = (cpu_state_t*)cpu_rd_sp()
 
+/* 
+  Increment the stored PC when S/W exception has been executed, 
+  and set 'lsb' to indicate that stack is result of S/W trap. 
+*/
+#define cpu_inc_mepc()                  \
+	__asm (								\
+        "   lw      t0,124(sp)      \n" \
+        "   addi    t0,t0,4         \n" \
+        "   ori     t0,t0,1         \n" \
+        "   sw      t0,124(sp)      \n" \
+        )
+
+/* 
+  Retrieve the PC and test if it was stored by a S/W exception
+  or if it was stored as a result of a H/W trap. If stored
+  by S/W, strip the 'lsb' and decrement the value.
+*/
+#define cpu_dec_mepc()                  \
+	__asm (								\
+        "   lw      t0,124(sp)      \n" \
+        "   andi    t0,t0,1         \n" \
+        "   beq     t0,zero,1f      \n" \
+        "   lw      t0,124(sp)      \n" \
+        "   xori    t0,t0,1         \n" \
+        "   addi    t0,t0,-4        \n" \
+        "   sw      t0,124(sp)      \n" \
+        "1: lw      t0,124(sp)      \n" \
+        )
+
+/* 
+  Retrieve the PC and test if it was stored by a S/W exception
+  or if it was stored as a result of a H/W trap. If stored
+  by S/W 
+*/
+#define cpu_nop_mepc()                  \
+	__asm (								\
+        "   lw      t0,124(sp)      \n" \
+        "   andi    t0,t0,1         \n" \
+        "   beq     t0,zero,1f      \n" \
+        "   lw      t0,124(sp)      \n" \
+        "   xori    t0,t0,1         \n" \
+        "   sw      t0,124(sp)      \n" \
+        "1: lw      t0,124(sp)      \n" \
+        )
+
 #define cpu_pop_state()                 \
 	__asm (								\
         "   lw      t0,124(sp)      \n" \
