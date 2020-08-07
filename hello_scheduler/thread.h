@@ -42,10 +42,11 @@ extern scheduler_t scheduler_state;
 #define thread_start(id)    thread_set_prio((id),THREAD_PRIO_MIN)
 
 extern void thread_init     ( void );
-extern int  thread_create   ( const char* name, void (*entry)(void*), void* stack, size_t stack_sz );
+extern int  thread_create   ( const char* name, void (*entry)(void*), cpu_reg_t* stack, size_t n_stack_words );
 extern int  thread_set_prio ( int id, int8_t prio );
 extern void thread_yield    ( void );
 
-extern volatile __attribute__( ( naked ) ) void systick_isr( void );
+extern volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void );
+extern volatile __attribute__( ( naked ) ) void eclic_msip_handler( void );
 
 #endif

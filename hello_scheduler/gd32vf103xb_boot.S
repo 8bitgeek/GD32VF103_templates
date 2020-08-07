@@ -1,5 +1,8 @@
 #include "riscv_encoding.h"
 
+.global eclic_msip_handler
+.global eclic_mtip_handler
+
 /*
  * Main vector table entries.
  */
@@ -16,7 +19,6 @@ vtable:
   .word 0
   .word 0
   .word eclic_mtip_handler
-  .set  eclic_mtip_handler,systick_isr
   .word 0
   .word 0
   .word 0
@@ -102,12 +104,6 @@ vtable:
    * 'default_interrupt_handler', unless the application defines
    * a function with the same name to override the reference.
    */
-  #if 0
-  .weak eclic_msip_handler
-  .set  eclic_msip_handler,default_interrupt_handler
-  .weak eclic_mtip_handler
-  .set  eclic_mtip_handler,default_interrupt_handler
-  #endif
   .weak eclic_bwei_handler
   .set  eclic_bwei_handler,default_interrupt_handler
   .weak eclic_pmovi_handler

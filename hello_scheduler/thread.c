@@ -43,7 +43,7 @@ static void thread_exit( void )
     for(;;);
 }
 
-int thread_create( const char* name, void (*entry)(void*), void* stack, size_t stack_sz )
+int thread_create( const char* name, void (*entry)(void*), cpu_reg_t* stack, size_t n_stack_words )
 {
     int id = thread_new_id();
     if ( id >= 0 )
@@ -58,7 +58,7 @@ int thread_create( const char* name, void (*entry)(void*), void* stack, size_t s
              uint8_t* stack_uint8 = (uint8_t*)stack; 
 
             /* initialize the cpu state initial stack frame */
-            cpu_state_t* cpu_state = (cpu_state_t*)&stack_uint8[stack_sz-sizeof(cpu_state_t)];
+            cpu_state_t* cpu_state = (cpu_state_t*) &stack_uint8 [ (n_stack_words/sizeof(cpu_reg_t)) - sizeof(cpu_state_t) ];
             memset( cpu_state, 0, sizeof(cpu_state_t) );
     
             cpu_state->abi.ra = (cpu_reg_t)thread_exit;
@@ -113,7 +113,7 @@ static cpu_reg_t next_context( void )
 }
 
 
-volatile __attribute__( ( naked ) ) void systick_isr( void ) 
+volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void ) 
 {
     cpu_systick_enter();
     

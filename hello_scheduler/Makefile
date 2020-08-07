@@ -1,3 +1,8 @@
+TARGET=main
+OPENOCD=riscv-openocd
+OPENOCD_JTAG_CFG=../common/openocd/olimex-jtag-tiny.cfg 
+OPENOCD_TARGET_CFG=../common/openocd/openocd_gd32vf103.cfg
+
 # GCC toolchain programs.
 CC = riscv32-unknown-elf-gcc
 OC = riscv32-unknown-elf-objcopy
@@ -58,7 +63,7 @@ OBJS += $(C_SRC:.c=.o)
 
 # Default rule to build the whole project.
 .PHONY: all
-all: main.bin
+all: $(TARGET).bin
 
 # Rule to build assembly files.
 %.o: %.S
@@ -69,11 +74,11 @@ all: main.bin
 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Rule to create an ELF file from the compiled object files.
-main.elf: $(OBJS)
+$(TARGET).elf: $(OBJS)
 	$(CC) $^ $(LFLAGS) -o $@
 
 # Rule to create a raw binary file from an ELF file.
-main.bin: main.elf
+$(TARGET).bin: $(TARGET).elf
 	$(OC) -S -O binary $< $@
 	$(OS) $<
 
@@ -81,22 +86,21 @@ main.bin: main.elf
 .PHONY: clean
 clean:
 	rm -f $(OBJS)
-	rm -f main.elf
-	rm -f main.bin
-	rm -f main.map
+	rm -f $(TARGET).elf
+	rm -f $(TARGET).bin
+	rm -f $(TARGET).map
 
 # Rule to start openocd
 start:
-	riscv-openocd -f ../common/openocd/olimex-jtag-tiny.cfg -f ../common/openocd/openocd_gd32vf103.cfg  2> /dev/null > /dev/null &
+	$(OPENOCD) -f $(OPENOCD_JTAG_CFG) -f $(OPENOCD_TARGET_CFG)  2> /dev/null > /dev/null &
 
 stop:
-	killall riscv-openocd
+	killall $(OPENOCD)
 
 # Rule to start debugger
 debug: main.bin
 	$(GDB) -x ./gdbinit
 
-# Rule to start debugger
-debug-tui: main.bin
-	$(GDB) -x ./gdbinit --tui 
+flash: $(TARGET).elf
+		$(OPENOCD) -f $(OPENOCD_JTAG_CFG) -f $(OPENOCD_TARGET_CFG) -c "program $(TARGET).elf verify reset exit"
 
