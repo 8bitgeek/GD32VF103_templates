@@ -89,13 +89,8 @@ vtable:
   .word DMA1_chan2_IRQn_handler
   .word DMA1_chan3_IRQn_handler
   .word DMA1_chan4_IRQn_handler
-#if 0
   .word 0
   .word 0
-#else 
-  /* j  ecall_svc   */
-  j  eclic_msip_handler
-#endif
   .word CAN1_TX_IRQn_handler
   .word CAN1_RX0_IRQn_handler
   .word CAN1_RX1_IRQn_handler
@@ -112,11 +107,11 @@ vtable:
   .set  eclic_msip_handler,default_interrupt_handler
   .weak eclic_mtip_handler
   .set  eclic_mtip_handler,default_interrupt_handler
+  #endif
   .weak eclic_bwei_handler
   .set  eclic_bwei_handler,default_interrupt_handler
   .weak eclic_pmovi_handler
   .set  eclic_pmovi_handler,default_interrupt_handler
-  #endif
   .weak watchdog_IRQn_handler
   .set  watchdog_IRQn_handler,default_interrupt_handler
   .weak LVD_IRQn_handler
@@ -246,15 +241,6 @@ vtable:
 default_interrupt_handler:
     default_interrupt_loop:
       j default_interrupt_loop
-
-.section .text.ecall_svc,"ax",%progbits
-ecall_svc:
-    addi    sp,sp,-4
-    sw      ra,0(sp)
-    jal     eclic_msip_handler
-    lw      ra,0(sp)
-    addi    sp,sp,4
-    ret
 
 /*
  * Assembly 'reset handler' function to initialize core CPU registers.

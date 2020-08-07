@@ -7,13 +7,13 @@
 
 scheduler_t scheduler_state;
 
+
+#define thread_msip_set()           *( volatile uint8_t * )( TIMER_CTRL_ADDR + TIMER_MSIP ) = 0x01
+#define thread_msip_clear()         *( volatile uint8_t * )( TIMER_CTRL_ADDR + TIMER_MSIP ) = 0x00
 #define thread_mtime_clear()        *( volatile uint64_t * )( TIMER_CTRL_ADDR + TIMER_MTIME ) = 0
-
 #define thread_state(id)            ((id) >= 0 && (id) < THREAD_MAX) ? (&scheduler_state.threads[(id)]) : NULL
-
 #define systick_service()           ++scheduler_state.systick;      \
                                     thread_mtime_clear();
-
 #define scheduler_service()         register cpu_reg_t context_sp;              \
                                     if ( ( context_sp = next_context() ) != 0 ) \
                                         cpu_wr_sp( context_sp );
@@ -33,9 +33,7 @@ void thread_init( void )
 
 void thread_yield( void )
 {
-    //eclic_set_pending(CLIC_INT_SFT);
-    __asm( "  ecall\n" );
-    set_csr( mstatus, MSTATUS_MIE );
+    thread_msip_set();
 }
 
 static void thread_exit( void )
@@ -123,51 +121,22 @@ volatile __attribute__( ( naked ) ) void systick_isr( void )
         
             systick_service();
             scheduler_service();
-            cpu_dec_mepc();
 
         cpu_pop_state();
 
     cpu_systick_exit();
 }
 
-__attribute__( ( naked ) ) void eclic_msip_handler( void )
+volatile __attribute__( ( naked ) ) void eclic_msip_handler( void )
 {
     cpu_systick_enter();
     
         cpu_push_state();
         
-            cpu_inc_mepc();
-            scheduler_service();
-            cpu_nop_mepc();
-
-        cpu_pop_state();
-
-    cpu_systick_exit();
-}
-
-__attribute__( ( interrupt ) ) void eclic_bwei_handler( void )
-{
-    cpu_systick_enter();
-    
-        cpu_push_state();
-        
+            thread_msip_clear();
             scheduler_service();
 
         cpu_pop_state();
 
     cpu_systick_exit();
 }
-
-__attribute__( ( interrupt ) ) void eclic_pmovi_handler( void )
-{
-    cpu_systick_enter();
-    
-        cpu_push_state();
-        
-            scheduler_service();
-
-        cpu_pop_state();
-
-    cpu_systick_exit();
-}
-
