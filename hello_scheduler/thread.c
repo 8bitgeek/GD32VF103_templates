@@ -15,6 +15,7 @@
                                     if ( ( context_sp = thread_schedule_next() ) != 0 ) \
                                         cpu_wr_sp( context_sp )
 #define thread_next_id()            (scheduler_state.thread_id = ( scheduler_state.thread_id+1 >= THREAD_MAX ) ? 0 : scheduler_state.thread_id+1)
+#define thread_prio_clear()         scheduler_state.prio = 0;
 
 scheduler_t scheduler_state;
 
@@ -157,6 +158,7 @@ volatile __attribute__( ( naked ) ) void eclic_msip_handler( void )
         cpu_push_state();
         
             thread_msip_clear();
+            thread_prio_clear();
             thread_scheduler_service();
 
         cpu_pop_state();
