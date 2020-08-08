@@ -73,7 +73,7 @@ int thread_create( const char* name, void (*thread_fn)(void*), void* arg, cpu_re
              uint8_t* stack_uint8 = (uint8_t*)stack; 
 
             /* initialize the cpu state initial stack frame */
-            cpu_state_t* cpu_state = (cpu_state_t*) &stack_uint8 [ (n_stack_words/sizeof(cpu_reg_t)) - sizeof(cpu_state_t) ];
+            cpu_state_t* cpu_state = (cpu_state_t*) &stack_uint8 [ (n_stack_words*sizeof(cpu_reg_t)) - sizeof(cpu_state_t) ];
             memset( cpu_state, 0, sizeof(cpu_state_t) );
     
             cpu_state->abi.a0 = (cpu_reg_t)arg;
