@@ -9,7 +9,7 @@ The aim of this fork is:
 Current State:
 * Using OpenOCD found here https://github.com/8bitgeek/riscv-openocd
 * OpenOCD scripts work with Olimex JTAG Tiny https://www.olimex.com/Products/ARM/JTAG/ARM-USB-TINY/ proves feasability.
-* [hello_scheduler](https://github.com/8bitgeek/GD32VF103_templates/tree/master/hello_scheduler) is functional, main thread (blinks blue), two additional threads (blink red, and green).
+* [hello_scheduler](https://github.com/8bitgeek/GD32VF103_templates/tree/master/hello_scheduler) is functional, main thread sweeps blink rate, three additional threads (blink red, green, and blue).
   + hello_scheduler known issues
     - No thread terminate function (threads can't 'return'), returning from a thread will probably end badly. 
 
