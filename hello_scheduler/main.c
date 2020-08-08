@@ -97,9 +97,9 @@ int main( void )
     hw_init();
 
     main_thread_handle  = thread_init();
-    red_thread_handle   = thread_create( "red",   run_red,   &delay, red_stack,   STACK_BYTES );
-    green_thread_handle = thread_create( "green", run_green, &delay, green_stack, STACK_BYTES );
-    blue_thread_handle  = thread_create( "blue",  run_blue,  &delay, blue_stack, STACK_BYTES );
+    red_thread_handle   = thread_create( "red",   run_red,   &delay, red_stack,   STACK_WORDS );
+    green_thread_handle = thread_create( "green", run_green, &delay, green_stack, STACK_WORDS );
+    blue_thread_handle  = thread_create( "blue",  run_blue,  &delay, blue_stack,  STACK_WORDS );
 
     thread_start( red_thread_handle );
     thread_start( green_thread_handle );
