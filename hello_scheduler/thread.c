@@ -90,6 +90,12 @@ int thread_create( const char* name, void (*thread_fn)(void*), void* arg, cpu_re
     return id;
 }
 
+/**
+ * @brief set a thread priority. < 0 is inactive, = 0 is active but suspended.
+ *        > 0 indicates the maximum number of contiguous time slices the thread is allowed to get.
+ * @param id The thread handle.
+ * @param prio The thread priority -1 .. 127
+ */
 int thread_set_prio ( int id, int8_t prio )
 {
     thread_t* thread = thread_state(id);
@@ -115,6 +121,10 @@ static int thread_new_id( void )
     return -1;
 }
 
+/**
+ * @brief determine which thread gets this time slice.
+ * @return the context (stack pointer) to the thread to allocate this time slice to.
+ */
 static cpu_reg_t thread_schedule_next( void )
 {
     thread_t* thread;
@@ -137,6 +147,9 @@ static cpu_reg_t thread_schedule_next( void )
     return 0;
 }
 
+/**
+ * @brief timer interrupt, increment systick, and potentially switch thread context
+ */
 volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void ) 
 {
     cpu_systick_enter();
@@ -151,6 +164,9 @@ volatile __attribute__( ( naked ) ) void eclic_mtip_handler( void )
     cpu_systick_exit();
 }
 
+/**
+ * @brief software interrupt, thread yield, give up remaining prio and switch context.
+ */
 volatile __attribute__( ( naked ) ) void eclic_msip_handler( void )
 {
     cpu_systick_enter();
